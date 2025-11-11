@@ -28,6 +28,13 @@ export class UserService {
         }
         return user;
     }
+    async findByEmailWithPassword(email: string): Promise<UserEntity | null> {
+        return this.bookRepository
+            .createQueryBuilder('user')
+            .addSelect('user.password')
+            .where('user.email = :email', { email })
+            .getOne();
+    }
     async update(id: string, user: UserEntity): Promise<UserEntity> {
         if (user.password) {
             const salt = await bcrypt.genSalt(10);

@@ -17,9 +17,12 @@ import { LoanEntity } from './loan/loan.entity/loan.entity';
 import { UserEntity } from './user/user.entity/user.entity';
 import { DeliveryEntity } from './delivery/delivery.entity/delivery.entity';
 import { RateEntity } from './rate/rate.entity/rate.entity';
+import { AuthModule } from './auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
 @Module({
-  imports: [BookModule, EditorialModule, AuthorModule, LoanModule, UserModule, DeliveryModule, RateModule,
+  imports: [BookModule, EditorialModule, AuthorModule, LoanModule, UserModule, DeliveryModule, RateModule, AuthModule,
      TypeOrmModule.forRoot({
      type: 'postgres',
      host: 'localhost',
@@ -33,6 +36,6 @@ import { RateEntity } from './rate/rate.entity/rate.entity';
    }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, { provide: APP_GUARD, useClass: JwtAuthGuard }],
 })
 export class AppModule {}
