@@ -1,0 +1,179 @@
+{
+  "info": {
+    "_postman_id": "biblio-udec-collection",
+    "name": "BiblioUdec_Back API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Colección para probar los endpoints de BiblioUdec_Back. Usa versionado por URL (/api/v1). Primero inicia sesión para obtener el token y usarlo en todas las demás peticiones protegidas."
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000/api/v1" },
+    { "key": "token", "value": "" },
+    { "key": "userId", "value": "" },
+    { "key": "bookId", "value": "" },
+    { "key": "authorId", "value": "" },
+    { "key": "editorialId", "value": "" },
+    { "key": "loanId", "value": "" },
+    { "key": "deliveryId", "value": "" },
+    { "key": "rateId", "value": "" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      { "key": "token", "value": "{{token}}", "type": "string" }
+    ]
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "description": "Autenticación JWT. Este endpoint es público.",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"AdminPass123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Obtiene un JWT. Luego se guarda en la variable de colección {{token}}."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json && json.access_token) {",
+                  "  pm.collectionVariables.set('token', json.access_token);",
+                  "  pm.test('Token recibido', function () { pm.expect(json.access_token).to.be.a('string'); });",
+                  "} else {",
+                  "  pm.test('No se recibió token', function () { pm.expect.fail('Sin access_token en respuesta'); });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "List Users",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/users", "host": ["{{baseUrl}}"], "path": ["users"] }
+          }
+        },
+        {
+          "name": "Get User by Id",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/users/{{userId}}", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}"] }
+          }
+        },
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/users", "host": ["{{baseUrl}}"], "path": ["users"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Admin\",\n  \"phone\": \"3000000000\",\n  \"email\": \"admin@example.com\",\n  \"password\": \"AdminPass123\",\n  \"role\": \"admin\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Crea un usuario. Requiere token (a menos que temporalmente hagas público este endpoint)."
+          }
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [ { "key": "Content-Type", "value": "application/json" } ],
+            "url": { "raw": "{{baseUrl}}/users/{{userId}}", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Updated\",\n  \"phone\": \"3001112233\",\n  \"email\": \"john@example.com\",\n  \"password\": \"NewPass123\",\n  \"role\": \"user\"\n}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "url": { "raw": "{{baseUrl}}/users/{{userId}}", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Authors",
+      "item": [
+        { "name": "List Authors", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/authors", "host": ["{{baseUrl}}"], "path": ["authors"] } } },
+        { "name": "Get Author by Id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/authors/{{authorId}}", "host": ["{{baseUrl}}"], "path": ["authors", "{{authorId}}"] } } },
+        { "name": "Create Author", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": { "raw": "{{baseUrl}}/authors", "host": ["{{baseUrl}}"], "path": ["authors"] }, "body": { "mode": "raw", "raw": "{\n  \"name\": \"Autor 1\"\n}", "options": { "raw": { "language": "json" } } } } },
+        { "name": "Update Author", "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": { "raw": "{{baseUrl}}/authors/{{authorId}}", "host": ["{{baseUrl}}"], "path": ["authors", "{{authorId}}"] }, "body": { "mode": "raw", "raw": "{\n  \"name\": \"Autor Editado\"\n}", "options": { "raw": { "language": "json" } } } } },
+        { "name": "Delete Author", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/authors/{{authorId}}", "host": ["{{baseUrl}}"], "path": ["authors", "{{authorId}}"] } } }
+      ]
+    },
+    {
+      "name": "Editorials",
+      "item": [
+        { "name": "List Editorials", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/editorials", "host": ["{{baseUrl}}"], "path": ["editorials"] } } },
+        { "name": "Get Editorial by Id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/editorials/{{editorialId}}", "host": ["{{baseUrl}}"], "path": ["editorials", "{{editorialId}}"] } } },
+        { "name": "Create Editorial", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": { "raw": "{{baseUrl}}/editorials", "host": ["{{baseUrl}}"], "path": ["editorials"] }, "body": { "mode": "raw", "raw": "{\n  \"name\": \"Editorial 1\",\n  \"address\": \"Calle 123\"\n}", "options": { "raw": { "language": "json" } } } } },
+        { "name": "Update Editorial", "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": { "raw": "{{baseUrl}}/editorials/{{editorialId}}", "host": ["{{baseUrl}}"], "path": ["editorials", "{{editorialId}}"] }, "body": { "mode": "raw", "raw": "{\n  \"name\": \"Editorial Editada\",\n  \"address\": \"Calle 456\"\n}", "options": { "raw": { "language": "json" } } } } },
+        { "name": "Delete Editorial", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/editorials/{{editorialId}}", "host": ["{{baseUrl}}"], "path": ["editorials", "{{editorialId}}"] } } }
+      ]
+    },
+    {
+      "name": "Books",
+      "item": [
+        { "name": "List Books", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/books", "host": ["{{baseUrl}}"], "path": ["books"] } } },
+        { "name": "Get Book by Id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/books/{{bookId}}", "host": ["{{baseUrl}}"], "path": ["books", "{{bookId}}"] } } },
+        { "name": "Create Book", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": { "raw": "{{baseUrl}}/books", "host": ["{{baseUrl}}"], "path": ["books"] }, "body": { "mode": "raw", "raw": "{\n  \"isbn\": \"9788400000001\",\n  \"year\": 2024\n}", "options": { "raw": { "language": "json" } } } } },
+        { "name": "Update Book", "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": { "raw": "{{baseUrl}}/books/{{bookId}}", "host": ["{{baseUrl}}"], "path": ["books", "{{bookId}}"] }, "body": { "mode": "raw", "raw": "{\n  \"isbn\": \"9788400000002\",\n  \"year\": 2025\n}", "options": { "raw": { "language": "json" } } } } },
+        { "name": "Associate Authors to Book", "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": { "raw": "{{baseUrl}}/books/{{bookId}}/authors", "host": ["{{baseUrl}}"], "path": ["books", "{{bookId}}", "authors"] }, "body": { "mode": "raw", "raw": "[\n  { \"id\": \"{{authorId}}\" }\n]", "options": { "raw": { "language": "json" } } }, "description": "Envía un arreglo de autores con sus IDs." } },
+        { "name": "Add Editorial to Book", "request": { "method": "PUT", "url": { "raw": "{{baseUrl}}/books/{{bookId}}/editorial/{{editorialId}}", "host": ["{{baseUrl}}"], "path": ["books", "{{bookId}}", "editorial", "{{editorialId}}"] } } },
+        { "name": "Delete Book", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/books/{{bookId}}", "host": ["{{baseUrl}}"], "path": ["books", "{{bookId}}"] } } }
+      ]
+    },
+    {
+      "name": "Rates",
+      "item": [
+        { "name": "List Rates", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/rates", "host": ["{{baseUrl}}"], "path": ["rates"] } } },
+        { "name": "Get Rate by Id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/rates/{{rateId}}", "host": ["{{baseUrl}}"], "path": ["rates", "{{rateId}}"] } } },
+        { "name": "Create Rate", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": { "raw": "{{baseUrl}}/rates", "host": ["{{baseUrl}}"], "path": ["rates"] }, "body": { "mode": "raw", "raw": "{\n  \"value\": 5,\n  \"description\": \"Excelente servicio\"\n}", "options": { "raw": { "language": "json" } } } } },
+        { "name": "Update Rate", "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": { "raw": "{{baseUrl}}/rates/{{rateId}}", "host": ["{{baseUrl}}"], "path": ["rates", "{{rateId}}"] }, "body": { "mode": "raw", "raw": "{\n  \"value\": 4,\n  \"description\": \"Bueno\"\n}", "options": { "raw": { "language": "json" } } } } },
+        { "name": "Delete Rate", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/rates/{{rateId}}", "host": ["{{baseUrl}}"], "path": ["rates", "{{rateId}}"] } } }
+      ]
+    },
+    {
+      "name": "Loans",
+      "item": [
+        { "name": "List Loans", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/loans", "host": ["{{baseUrl}}"], "path": ["loans"] } } },
+        { "name": "Get Loan by Id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/loans/{{loanId}}", "host": ["{{baseUrl}}"], "path": ["loans", "{{loanId}}"] } } },
+        { "name": "Create Loan", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": { "raw": "{{baseUrl}}/loans", "host": ["{{baseUrl}}"], "path": ["loans"] }, "body": { "mode": "raw", "raw": "{\n  \"loanDate\": \"2025-11-01T00:00:00.000Z\",\n  \"expirationDate\": \"2025-12-01T00:00:00.000Z\",\n  \"isActive\": true\n}", "options": { "raw": { "language": "json" } } } } },
+        { "name": "Update Loan", "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": { "raw": "{{baseUrl}}/loans/{{loanId}}", "host": ["{{baseUrl}}"], "path": ["loans", "{{loanId}}"] }, "body": { "mode": "raw", "raw": "{\n  \"loanDate\": \"2025-11-02T00:00:00.000Z\",\n  \"expirationDate\": \"2025-12-02T00:00:00.000Z\",\n  \"isActive\": false\n}", "options": { "raw": { "language": "json" } } } } },
+        { "name": "Delete Loan", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/loans/{{loanId}}", "host": ["{{baseUrl}}"], "path": ["loans", "{{loanId}}"] } } },
+        { "name": "Associate User to Loan", "request": { "method": "PUT", "url": { "raw": "{{baseUrl}}/loans/{{loanId}}/users/{{userId}}", "host": ["{{baseUrl}}"], "path": ["loans", "{{loanId}}", "users", "{{userId}}"] } } },
+        { "name": "Associate Delivery to Loan", "request": { "method": "PUT", "url": { "raw": "{{baseUrl}}/loans/{{loanId}}/delivery/{{deliveryId}}", "host": ["{{baseUrl}}"], "path": ["loans", "{{loanId}}", "delivery", "{{deliveryId}}"] }, "description": "Actualmente no hay endpoints públicos para crear deliveries; deberás crearlo vía base de datos o agregar un controlador." } },
+        { "name": "Associate Rate to Loan", "request": { "method": "PUT", "url": { "raw": "{{baseUrl}}/loans/{{loanId}}/rates/{{rateId}}", "host": ["{{baseUrl}}"], "path": ["loans", "{{loanId}}", "rates", "{{rateId}}"] } } },
+        { "name": "Associate Books to Loan", "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": { "raw": "{{baseUrl}}/loans/{{loanId}}/books", "host": ["{{baseUrl}}"], "path": ["loans", "{{loanId}}", "books"] }, "body": { "mode": "raw", "raw": "[\n  { \"id\": \"{{bookId}}\" }\n]", "options": { "raw": { "language": "json" } } } } }
+      ]
+    }
+  ]
+}
