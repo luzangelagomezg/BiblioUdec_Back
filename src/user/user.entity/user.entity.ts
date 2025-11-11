@@ -17,6 +17,11 @@ export class UserEntity {
     @Column()
     email: string;
 
+    // Store only the hashed password; exclude from default selects
+    // Mark nullable to avoid migration failure for existing rows when synchronize=true
+    @Column({ select: false, nullable: true })
+    password: string;
+
     @OneToMany(() => LoanEntity, loan => loan.user)
     loans: LoanEntity[];
 

@@ -22,13 +22,18 @@ export class UserController {
     @Post()
     async create(@Body() UserDto: UserDto) {
         const user: UserEntity = plainToInstance(UserEntity, UserDto);
-        return this.userService.create(user);
+        const created = await this.userService.create(user);
+        // return without password
+        const { password, ...rest } = created as any;
+        return rest;
     }
 
     @Put(':id')
     async update(@Param('id') id: string, @Body() UserDto: UserDto) {
         const user: UserEntity = plainToInstance(UserEntity, UserDto);
-        return this.userService.update(id, user);
+        const updated = await this.userService.update(id, user);
+        const { password, ...rest } = updated as any;
+        return rest;
     }
 
     @Delete(':id')
