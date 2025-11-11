@@ -4,6 +4,7 @@ import { UserService } from './user.service';
 import { UserDto } from './user.dto/user.dto';
 import { UserEntity } from './user.entity/user.entity';
 import { plainToInstance } from 'class-transformer';
+import { Public } from 'src/auth/public.decorator';
 
 @Controller('users')
 export class UserController {
@@ -19,6 +20,7 @@ export class UserController {
         return this.userService.findOne(id);
     }
 
+    @Public()
     @Post()
     async create(@Body() UserDto: UserDto) {
         const user: UserEntity = plainToInstance(UserEntity, UserDto);
