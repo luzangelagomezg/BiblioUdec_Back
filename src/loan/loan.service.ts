@@ -68,8 +68,22 @@ export class LoanService {
         return loan;
     }
 
-    async update(id: string, loan: LoanEntity): Promise<LoanEntity> {
-        await this.loanRepository.update(id, loan);
+    async update(id: string, loan: Partial<LoanEntity>): Promise<LoanEntity> {
+        // Verificar existencia primero
+        await this.findOne(id);
+
+        // Build partial update object
+        const updateData: Partial<LoanEntity> = {};
+        if (loan.loanDate) updateData.loanDate = loan.loanDate;
+        if (loan.expirationDate) updateData.expirationDate = loan.expirationDate;
+        if (typeof loan.isActive === 'boolean') updateData.isActive = loan.isActive;
+        if (loan.status) updateData.status = loan.status;
+
+        // Clear delivery explicitly if payload asks for null
+        if ((loan as any).delivery === null) {
+            (updateData as any).delivery = null; // TypeORM will null FK
+        }
+        await this.loanRepository.update(id, updateData);
         return this.findOne(id);
     }
 
@@ -108,11 +122,14 @@ export class LoanService {
         if (!loan) {
             throw new Error(`Loan with id ${loanId} not found`);
         }
+        
         const rate = await this.rateRepository.findOneBy({ id: rateId });
         if (!rate) {
             throw new Error(`Rate with id ${rateId} not found`);
         }
+        
         loan.rate = rate;
+        
         return this.loanRepository.save(loan);
     }
 
@@ -133,11 +150,20 @@ export class LoanService {
         return this.loanRepository.save(loan);
     }
 
-    async approveLoan(id: string): Promise<LoanEntity> {
+    async approveLoan(id: string, rateId?: string): Promise<LoanEntity> {
         const loan = await this.findOne(id);
         
         if (loan.status !== LoanStatus.CREADO) {
             throw new BadRequestException(`Loan can only be approved if status is 'creado'. Current status: ${loan.status}`);
+        }
+
+        // Attach rate if provided and exists
+        if (rateId) {
+            const rate = await this.rateRepository.findOneBy({ id: rateId });
+            if (!rate) {
+                throw new NotFoundException(`Rate with id ${rateId} not found`);
+            }
+            loan.rate = rate;
         }
 
         loan.status = LoanStatus.APROBADO;

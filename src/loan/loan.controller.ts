@@ -33,8 +33,8 @@ export class LoanController {
 
     @Put(':id')
     update(@Param('id') id: string, @Body() loanDto: LoanDto): Promise<LoanEntity> {
-        const loan: LoanEntity = plainToInstance(LoanEntity, loanDto);
-        return this.loanService.update(id, loan);
+        // Enviar el DTO crudo al servicio para un update parcial seguro
+        return this.loanService.update(id, loanDto as any);
     }
 
     @Delete(':id')
@@ -63,8 +63,9 @@ export class LoanController {
     }
 
     @Post(':id/approve')
-    approveLoan(@Param('id') id: string): Promise<LoanEntity> {
-        return this.loanService.approveLoan(id);
+    approveLoan(@Param('id') id: string, @Body() body?: { rateId?: string }): Promise<LoanEntity> {
+        const rateId = body?.rateId?.trim();
+        return this.loanService.approveLoan(id, rateId);
     }
 
     @Post(':id/reject')
