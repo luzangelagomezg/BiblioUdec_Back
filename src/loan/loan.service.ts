@@ -34,6 +34,17 @@ export class LoanService {
         return this.loanRepository.find({relations: ["books","user","delivery","rate"]});
     }
 
+    async findByUser(userId: string): Promise<LoanEntity[]> {
+        const user = await this.userRepository.findOneBy({ id: userId });
+        if (!user) {
+            throw new NotFoundException(`User with id ${userId} not found`);
+        }
+        return this.loanRepository.find({
+            where: { user: { id: userId } },
+            relations: ["books", "user", "delivery", "rate"]
+        });
+    }
+
     async findOne(id: string): Promise<LoanEntity> {
         const loan = await this.loanRepository.findOne({
             where: { id },

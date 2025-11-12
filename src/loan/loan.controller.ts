@@ -21,6 +21,11 @@ export class LoanController {
         return this.loanService.findAll();
     }
 
+    @Get('user/:userId')
+    findByUser(@Param('userId') userId: string): Promise<LoanEntity[]> {
+        return this.loanService.findByUser(userId);
+    }
+
     @Get(':id')
     findOne(@Param('id') id: string): Promise<LoanEntity> {
         return this.loanService.findOne(id);

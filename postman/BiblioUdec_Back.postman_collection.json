@@ -165,6 +165,7 @@
       "name": "Loans",
       "item": [
         { "name": "List Loans", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/loans", "host": ["{{baseUrl}}"], "path": ["loans"] } } },
+        { "name": "Get Loans by User", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/loans/user/{{userId}}", "host": ["{{baseUrl}}"], "path": ["loans", "user", "{{userId}}"] }, "description": "Obtiene todos los préstamos de un usuario específico." } },
         { "name": "Get Loan by Id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/loans/{{loanId}}", "host": ["{{baseUrl}}"], "path": ["loans", "{{loanId}}"] } } },
         { "name": "Create Loan", "request": { "method": "POST", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": { "raw": "{{baseUrl}}/loans", "host": ["{{baseUrl}}"], "path": ["loans"] }, "body": { "mode": "raw", "raw": "{\n  \"loanDate\": \"2025-11-01T00:00:00.000Z\",\n  \"expirationDate\": \"2025-12-01T00:00:00.000Z\",\n  \"isActive\": true\n}", "options": { "raw": { "language": "json" } } } } },
         { "name": "Update Loan", "request": { "method": "PUT", "header": [ { "key": "Content-Type", "value": "application/json" } ], "url": { "raw": "{{baseUrl}}/loans/{{loanId}}", "host": ["{{baseUrl}}"], "path": ["loans", "{{loanId}}"] }, "body": { "mode": "raw", "raw": "{\n  \"loanDate\": \"2025-11-02T00:00:00.000Z\",\n  \"expirationDate\": \"2025-12-02T00:00:00.000Z\",\n  \"isActive\": false\n}", "options": { "raw": { "language": "json" } } } } },
