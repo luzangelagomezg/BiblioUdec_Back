@@ -29,13 +29,13 @@ export class LoanEntity {
     @OneToMany(() => BookEntity, book => book.loan)
     books: BookEntity[];
 
-    @ManyToOne(() => UserEntity, user => user.loans)
-    user: UserEntity;
+    @ManyToOne(() => UserEntity, user => user.loans, { nullable: true })
+    user?: UserEntity;
 
-    @OneToOne(() => DeliveryEntity, delivery => delivery.loan)
+    @OneToOne(() => DeliveryEntity, delivery => delivery.loan, { nullable: true })
     @JoinColumn()
-    delivery: DeliveryEntity;
+    delivery?: DeliveryEntity;
 
-    @ManyToOne(() => RateEntity, rate => rate.loans)
-    rate: UserEntity;
+    @ManyToOne(() => RateEntity, rate => rate.loans, { nullable: true })
+    rate?: RateEntity;
 }   

@@ -27,6 +27,18 @@ export class LoanService {
         if (!loan.status) {
             loan.status = LoanStatus.CREADO;
         }
+        
+        // Limpiar relaciones vacías o con IDs vacíos
+        if (loan.rate && (!loan.rate.id || loan.rate.id === '')) {
+            loan.rate = undefined;
+        }
+        if (loan.delivery && (!loan.delivery.id || loan.delivery.id === '')) {
+            loan.delivery = undefined;
+        }
+        if (loan.user && (!loan.user.id || loan.user.id === '')) {
+            loan.user = undefined;
+        }
+        
         return this.loanRepository.save(loan);
     }
 
@@ -100,7 +112,7 @@ export class LoanService {
         if (!rate) {
             throw new Error(`Rate with id ${rateId} not found`);
         }
-        loan.rate.id = rate.id;
+        loan.rate = rate;
         return this.loanRepository.save(loan);
     }
 
