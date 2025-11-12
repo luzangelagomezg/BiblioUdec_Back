@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { LoanEntity } from './loan.entity/loan.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -7,6 +7,7 @@ import { UserEntity } from 'src/user/user.entity/user.entity';
 import { DeliveryEntity } from 'src/delivery/delivery.entity/delivery.entity';
 import { RateEntity } from 'src/rate/rate.entity/rate.entity';
 import { BookEntity } from 'src/book/book.entity/book.entity';
+import { LoanStatus } from './loan.entity/loan-status.enum';
 
 @Injectable()
 export class LoanService {
@@ -23,6 +24,9 @@ export class LoanService {
        private readonly bookRepository: Repository<BookEntity>
    ){}
     async create(loan: LoanEntity): Promise<LoanEntity> {
+        if (!loan.status) {
+            loan.status = LoanStatus.CREADO;
+        }
         return this.loanRepository.save(loan);
     }
 
@@ -103,6 +107,39 @@ export class LoanService {
         }
 
         loan.books = books;
+        return this.loanRepository.save(loan);
+    }
+
+    async approveLoan(id: string): Promise<LoanEntity> {
+        const loan = await this.findOne(id);
+        
+        if (loan.status !== LoanStatus.CREADO) {
+            throw new BadRequestException(`Loan can only be approved if status is 'creado'. Current status: ${loan.status}`);
+        }
+
+        loan.status = LoanStatus.APROBADO;
+        return this.loanRepository.save(loan);
+    }
+
+    async rejectLoan(id: string): Promise<LoanEntity> {
+        const loan = await this.findOne(id);
+        
+        if (loan.status !== LoanStatus.CREADO) {
+            throw new BadRequestException(`Loan can only be rejected if status is 'creado'. Current status: ${loan.status}`);
+        }
+
+        loan.status = LoanStatus.RECHAZADO;
+        return this.loanRepository.save(loan);
+    }
+
+    async finalizeLoan(id: string): Promise<LoanEntity> {
+        const loan = await this.findOne(id);
+        
+        if (loan.status !== LoanStatus.APROBADO) {
+            throw new BadRequestException(`Loan can only be finalized if status is 'aprobado'. Current status: ${loan.status}`);
+        }
+
+        loan.status = LoanStatus.FINALIZADO;
         return this.loanRepository.save(loan);
     }
 }

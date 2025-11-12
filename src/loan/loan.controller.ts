@@ -56,4 +56,19 @@ export class LoanController {
     associateBooks(@Param('loanId') loanId: string, @Body() books: BookEntity[]): Promise<LoanEntity> {
         return this.loanService.associateBooksToLoan(loanId, books);
     }
+
+    @Post(':id/approve')
+    approveLoan(@Param('id') id: string): Promise<LoanEntity> {
+        return this.loanService.approveLoan(id);
+    }
+
+    @Post(':id/reject')
+    rejectLoan(@Param('id') id: string): Promise<LoanEntity> {
+        return this.loanService.rejectLoan(id);
+    }
+
+    @Post(':id/finalize')
+    finalizeLoan(@Param('id') id: string): Promise<LoanEntity> {
+        return this.loanService.finalizeLoan(id);
+    }
 }

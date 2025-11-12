@@ -4,6 +4,7 @@ import { DeliveryEntity } from 'src/delivery/delivery.entity/delivery.entity';
 import { RateEntity } from 'src/rate/rate.entity/rate.entity';
 import { UserEntity } from 'src/user/user.entity/user.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { LoanStatus } from './loan-status.enum';
 
 @Entity()
 export class LoanEntity {
@@ -18,6 +19,12 @@ export class LoanEntity {
 
     @Column()
     isActive: boolean;
+
+    @Column({
+        type: 'varchar',
+        default: LoanStatus.CREADO
+    })
+    status: LoanStatus;
 
     @OneToMany(() => BookEntity, book => book.loan)
     books: BookEntity[];

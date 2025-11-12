@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Type } from "class-transformer";
-import { IsBoolean, IsDate } from "class-validator";
+import { IsBoolean, IsDate, IsEnum, IsOptional } from "class-validator";
+import { LoanStatus } from "../loan.entity/loan-status.enum";
 
 
 export class LoanDto {
@@ -14,4 +15,8 @@ export class LoanDto {
 
     @IsBoolean()
     isActive: boolean;
+
+    @IsOptional()
+    @IsEnum(LoanStatus)
+    status?: LoanStatus;
 }
